@@ -1,3 +1,4 @@
+from types import new_class
 import unittest
 
 from split_delimiter import split_nodes_delimiter
@@ -54,6 +55,21 @@ class TestSplitDelimiter(unittest.TestCase):
                 TextNode(" starting with ", TextType.PLAIN),
                 TextNode("bold text", TextType.BOLD),
             ],
+        )
+
+    def test_using_function_twice_doesnt_duplicate_text(self):
+        node = TextNode("_This is text_ starting with **italic** and ending plain", TextType.PLAIN)
+        new_nodes = split_nodes_delimiter([node], "**", TextType.BOLD)
+        new_nodes = split_nodes_delimiter(new_nodes, "_", TextType.ITALIC)
+
+        self.assertListEqual(
+            [
+                TextNode("This is text", TextType.ITALIC),
+                TextNode(" starting with ", TextType.PLAIN),
+                TextNode("italic", TextType.BOLD),
+                TextNode(" and ending plain", TextType.PLAIN),
+            ],
+            new_nodes
         )
 
 if __name__ == "__main__":

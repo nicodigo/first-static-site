@@ -1,5 +1,6 @@
 from md_helpers import extract_markdown_images, extract_markdown_links
 from textnode import TextNode, TextType
+from pprint import pprint
 
 
 def split_nodes_delimiter(
@@ -9,6 +10,7 @@ def split_nodes_delimiter(
     for node in old_nodes:
         if node.text_type != TextType.PLAIN:
             new_nodes.append(node)
+            continue
 
         split_node = node.text.split(delimiter)
         if len(split_node) % 2 == 0:
@@ -29,6 +31,7 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
         if node.text_type != TextType.PLAIN:
             new_nodes.append(node)
+            continue
         links = extract_markdown_links(node.text)
         # if there is no links in the node
         if len(links) == 0:
@@ -42,9 +45,9 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             if split_text[0]:
                 new_nodes.append(TextNode(split_text[0], TextType.PLAIN))
             new_nodes.append(TextNode(link[0], TextType.LINK, link[1]))
-            if split_text[1] == None:
-                break
             node_text = split_text[1]
+        if node_text:
+            new_nodes.append(TextNode(node_text, TextType.PLAIN))
     return new_nodes
 
 
@@ -53,6 +56,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
         if node.text_type != TextType.PLAIN:
             new_nodes.append(node)
+            continue
         images = extract_markdown_images(node.text)
         if len(images) == 0:
             if node.text:
@@ -64,9 +68,9 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
             if split_text[0]:
                 new_nodes.append(TextNode(split_text[0], TextType.PLAIN))
             new_nodes.append(TextNode(image[0], TextType.IMAGE, image[1]))
-            if split_text[1] == None:
-                break
             node_text = split_text[1]
+        if node_text:
+            new_nodes.append(TextNode(node_text, TextType.PLAIN))
     return new_nodes
 
 
