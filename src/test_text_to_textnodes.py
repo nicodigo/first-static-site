@@ -1,5 +1,4 @@
 import unittest
-from pprint import pprint
 
 from split_delimiter import text_to_textnodes
 from textnode import TextNode, TextType

@@ -1,5 +1,4 @@
 import unittest
-from pprint import pprint
 
 from md_helpers import markdown_to_blocks
 

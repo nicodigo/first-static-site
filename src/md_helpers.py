@@ -1,6 +1,7 @@
 import re
 
 
+
 def extract_markdown_images(text: str) -> list[tuple[str, str]]:
     matches = re.findall(r"!\[([^\r\n\[\]]*)\]\(([^\r\n\(\)]*)\)", text)
     return matches
@@ -9,6 +10,7 @@ def extract_markdown_images(text: str) -> list[tuple[str, str]]:
 def extract_markdown_links(text: str) -> list[tuple[str, str]]:
     matches = re.findall(r"(?<!!)\[([^\r\n\[\]]*)\]\(([^\r\n\(\)]*)\)", text)
     return matches
+
 
 def markdown_to_blocks(text: str) -> list[str]:
     text_blocks = text.split("\n\n")
