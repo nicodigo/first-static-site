@@ -1,6 +1,10 @@
 import os
 import shutil
 
+from htmlnode import HTMLNode
+from markdown_to_html_node import markdown_to_html_node
+from md_helpers import extract_markdown_title
+
 
 def copy_files(src: str, dst: str) -> None:
     for item in os.listdir(src):
@@ -25,8 +29,42 @@ def copy_contents(src: str, dst: str) -> None:
     copy_files(src, dst)
 
 
+
+
+
+
+def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+
+    if not os.path.isfile(from_path):
+        raise ValueError("from_path must be a file")
+
+    if not os.path.isfile(template_path):
+        raise ValueError("template_path must be a file")
+
+    with open(from_path, "r") as f:
+        markdown: str = f.read()
+
+    with open(template_path) as f:
+        template_html = f.read()
+
+    parent_div_node: HTMLNode = markdown_to_html_node(markdown)
+    html_string = parent_div_node.to_html()
+    md_title = extract_markdown_title(markdown)
+
+    html_page = template_html.replace("{{ Title }}", md_title).replace("{{ Content }}", html_string)
+
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    with open(dest_path, "w") as f:
+        f.write(html_page)
+
+
+
+
+
 def main() -> None:
     copy_contents("./static", "./public")
+    generate_page("./content/index.md", "./template.html", "./public/index.html")
 
 
 if __name__ == "__main__":

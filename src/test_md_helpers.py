@@ -1,6 +1,10 @@
 import unittest
 
-from md_helpers import extract_markdown_images, extract_markdown_links
+from md_helpers import (
+    extract_markdown_images,
+    extract_markdown_links,
+    extract_markdown_title,
+)
 
 
 class TestExtractMdImg(unittest.TestCase):
@@ -50,6 +54,34 @@ class TestExtractMdLink(unittest.TestCase):
             '''
         )
         self.assertListEqual([], matches)
+
+class TestExtractMdTitle(unittest.TestCase):
+    def test_extrcts_title(self):
+        md="""
+this is some markdown
+with a
+
+# Title
+
+and some text"""
+        self.assertEqual(
+            extract_markdown_title(md),
+            "Title",
+        )
+
+        md="""
+
+#       A Title
+
+and some text"""
+        self.assertEqual(
+            extract_markdown_title(md),
+            "A Title",
+        )
+
+    def test_extracts_title_raises_exception(self):
+        md="text with no title"
+        self.assertRaises(ValueError, extract_markdown_title, md)
 
 if __name__ == "__main__":
     unittest.main()
