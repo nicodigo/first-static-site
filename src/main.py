@@ -29,10 +29,6 @@ def copy_contents(src: str, dst: str) -> None:
     copy_files(src, dst)
 
 
-
-
-
-
 def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
 
@@ -52,19 +48,30 @@ def generate_page(from_path: str, template_path: str, dest_path: str) -> None:
     html_string = parent_div_node.to_html()
     md_title = extract_markdown_title(markdown)
 
-    html_page = template_html.replace("{{ Title }}", md_title).replace("{{ Content }}", html_string)
+    html_page = template_html.replace("{{ Title }}", md_title).replace(
+        "{{ Content }}", html_string
+    )
 
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     with open(dest_path, "w") as f:
         f.write(html_page)
 
 
+def generate_pages_recursive(dir_path_content: str, template_path: str, dest_dir_path: str) -> None:
+    for item in os.listdir(dir_path_content):
+        from_path = os.path.join(dir_path_content, item)
+        dest_path = os.path.join(dest_dir_path, item)
+        if os.path.isfile(from_path):
+            if from_path.endswith(".md"):
+                generate_page(from_path, template_path, dest_path.replace(".md", ".html"))
+            return
+        generate_pages_recursive(from_path, template_path, dest_path)
 
 
 
 def main() -> None:
     copy_contents("./static", "./public")
-    generate_page("./content/index.md", "./template.html", "./public/index.html")
+    generate_pages_recursive("./content", "./template.html", "./public")
 
 
 if __name__ == "__main__":
